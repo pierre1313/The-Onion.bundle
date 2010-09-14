@@ -20,6 +20,8 @@
 	<string>AAC</string>
 	<key>PlexClientPlatforms</key>
 	<string>MacOSX</string>
+	<key>PlexFrameworkVersion</key>
+	<string>1</string>
 	<key>PlexMediaContainer</key>
 	<string>MP4</string>
 	<key>PlexPluginDebug</key>
