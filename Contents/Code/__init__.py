@@ -58,7 +58,7 @@ def populateFromHTML(sender, show_id, show_title = '', replaceParent = False,  p
   return dir
     
 def MainMenu():
-   dir = MediaContainer("art-default.jpg", viewGroup="List", title2='')  
+   dir = MediaContainer(title2='')  
 
    categories = XML.ElementFromURL("http://www.theonion.com/content/video", cacheTime=CACHE_INTERVAL, isHTML=True).xpath('//ul[@id="categories"]/li')
    for e in categories:
@@ -73,7 +73,7 @@ def MainMenu():
    return dir
    
 def Shows(sender):
-   dir = MediaContainer("art-default.jpg", viewGroup="List", title2='Shows')  
+   dir = MediaContainer(title2='Shows')  
 
    shows = XML.ElementFromURL("http://www.theonion.com/content/video", cacheTime=CACHE_INTERVAL, isHTML=True).xpath('//ul[@id="categories"]/li')
    foundshow = 0
@@ -90,6 +90,3 @@ def Shows(sender):
            title = e.xpath("span/a")[0].get("rel")
          dir.Append(Function(DirectoryItem(populateFromHTML,title = title),show_id = id, show_title = title))
    return dir
-
-def PlayVideo(sender,videofile):
-  return Redirect(videofile)
