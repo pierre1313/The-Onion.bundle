@@ -1,11 +1,7 @@
-from PMS import *
-from PMS.Objects import *
-from PMS.Shortcuts import *
 import re
 
 TO_PLUGIN_PREFIX   = "/video/theonion"
 TO_BASE_URL        = "http://www.theonion.com"
-#TO_SEARCH_URL      = HULU_BASE_URL + "search/"
 
 CACHE_INTERVAL       = 1000 # HTTP cache interval in seconds
 MAX_RESULTS          = "100"
@@ -58,7 +54,7 @@ def MainMenu():
    dir = MediaContainer(title2='')  
    
    dir.Append(Function(DirectoryItem(Shows,title = "Shows")))
-   categories = XML.ElementFromURL(MAIN_PAGE, cacheTime=CACHE_INTERVAL, isHTML=True).xpath('//div[@id="side_recirc"]/div')
+   categories = HTML.ElementFromURL(MAIN_PAGE, cacheTime=CACHE_INTERVAL).xpath('//div[@id="side_recirc"]/div')
    for c in categories:
      id = c.get("rel")
      title = c.xpath("a")[0].text
@@ -68,7 +64,7 @@ def MainMenu():
 def Shows(sender):
    dir = MediaContainer(title2='Shows')  
 
-   shows = XML.ElementFromURL(MAIN_PAGE, cacheTime=CACHE_INTERVAL, isHTML=True).xpath('//ul[@id="categories"]//li')
+   shows = HTML.ElementFromURL(MAIN_PAGE, cacheTime=CACHE_INTERVAL).xpath('//ul[@id="categories"]//li')
    for e in shows:
      if e.get("class") != "label":
        title= e.xpath("a")[0].text_content()
