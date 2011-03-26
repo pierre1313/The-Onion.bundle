@@ -41,12 +41,15 @@ def populateFromHTML(sender, show_id, show_title = '', replaceParent = False,  p
     elementid = TO_BASE_URL + e.get("class")
     id = elementid[elementid.rfind('_')+1:]
     summary = e.xpath("//p[@class='teaser']")[0].text
-    jsonObject = JSON.ObjectFromURL(JSONPATH % id)
-    link = jsonObject['video_url']
-    title = jsonObject['title']
-    duration = jsonObject['duration']
-    thumb = jsonObject['thumbnail']
-    dir.Append(VideoItem(link, title,'',summary = summary, duration = duration, thumb=Function(GetThumb,thumb)))
+    try:
+      jsonObject = JSON.ObjectFromURL(JSONPATH % id)
+      link = jsonObject['video_url']
+      title = jsonObject['title']
+      duration = jsonObject['duration']
+      thumb = jsonObject['thumbnail']
+      dir.Append(VideoItem(link, title,'',summary = summary, duration = duration, thumb=Function(GetThumb,thumb)))
+    except:
+      pass
   dir.Append(Function(DirectoryItem(populateFromHTML, title = 'Next Page ...'),show_id = show_id, show_title = show_title, page = page+1, replaceParent = True))
   return dir
     
