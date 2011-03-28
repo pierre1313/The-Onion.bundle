@@ -27,30 +27,43 @@ def Start():
   DirectoryItem.thumb = R(ICON)
   
 ####################################################################################################
-def GetThumb(sender,url):
-  return DataObject(HTTP.Request(url),'image/jpg')
+def GetThumb(url):
+  try:
+    Log(url)
+    data = HTTP.Request(url, cacheTime=CACHE_1WEEK).content
+    return DataObject(data, 'image/jpeg')
+  except:
+    return Redirect(R(ICON))
 
 def populateFromHTML(sender, show_id, show_title = '', replaceParent = False,  page=1):
 
   dir = MediaContainer(content = 'Items', viewGroup="InfoList", replaceParent = replaceParent, title2=str(show_title) + ' - Page '+str(page))
-  
+    
   if page>1 :
     dir.Append(Function(DirectoryItem(populateFromHTML, title = 'Previous Page ...'),show_id = show_id, page = page-1, replaceParent = True))
   
-  for e in XML.ElementFromURL(TO_AJAX % (show_id,page), CACHE_INTERVAL).xpath("//li"):
+  for e in HTML.ElementFromURL(TO_AJAX % (show_id,page)).xpath("//li"):
+    summary = e.xpath('.//p[@class="teaser"]')[0].text
+    
     elementid = TO_BASE_URL + e.get("class")
     id = elementid[elementid.rfind('_')+1:]
-    summary = e.xpath("//p[@class='teaser']")[0].text
+
     try:
       jsonObject = JSON.ObjectFromURL(JSONPATH % id)
       link = jsonObject['video_url']
       title = jsonObject['title']
       duration = jsonObject['duration']
       thumb = jsonObject['thumbnail']
-      dir.Append(VideoItem(link, title,'',summary = summary, duration = duration, thumb=Function(GetThumb,thumb)))
+      dir.Append(VideoItem(link, title,'',summary = summary, duration = duration, thumb=Function(GetThumb,url=thumb)))
     except:
       pass
-  dir.Append(Function(DirectoryItem(populateFromHTML, title = 'Next Page ...'),show_id = show_id, show_title = show_title, page = page+1, replaceParent = True))
+
+  try: 
+    resp = HTTP.Request(TO_AJAX % (show_id, int(page + 1))).content
+    dir.Append(Function(DirectoryItem(populateFromHTML, title = 'Next Page ...'),show_id = show_id, show_title = show_title, page = page+1, replaceParent = True))
+  except:
+    pass
+    
   return dir
     
 def MainMenu():
